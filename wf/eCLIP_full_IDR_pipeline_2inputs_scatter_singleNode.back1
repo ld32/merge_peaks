@@ -15,10 +15,10 @@ set -o errexit
 #or zero if no command exited with a non-zero status
 set -o pipefail
 
-set -x 
+
 
 CWLRUNNER=cwltool # either: cwltool cwltoil or cwltorq
-WORKFLOW=wf_full_IDR_pipeline_1input_scatter # the prefix of the workflow cwl (without .cwl extension)
+WORKFLOW=wf_full_IDR_pipeline_2inputs_scatter # the prefix of the workflow cwl (without .cwl extension)
 
 PIPELINE=IDR  # workflow prefix
 PIPELINEVERSION=0.1.0  # workflow version
@@ -153,7 +153,7 @@ echo
 
 if [ $CWLRUNNER == cwltool ]
 then
-  cwltool --leave-tmpdir --no-container --debug \
+  cwltool --singularity --debug \
     --outdir ${OUTDIR} \
     --cachedir ${INTERM} \
     ${WORKFLOW_HOME}/cwl/${WORKFLOW}.cwl \
@@ -167,7 +167,7 @@ then
   if [ $CWLRUNNER == cwltorq ]; then
     BATCHSYSTEM="torque --disableCaching"
     export TOIL_TORQUE_ARGS="-q home-yeo"              # home-yeo
-    export TOIL_TORQUE_REQS="walltime=12:00:00"      # walltime=8:00:00
+    export TOIL_TORQUE_REQS="walltime=40:00:00"      # walltime=8:00:00
   else
     BATCHSYSTEM="single_machine"
   fi
@@ -207,12 +207,10 @@ then
     --clusterStats \
     --realTimeLogging \
     --stats \
-    --defaultMemory 64.0G  \
+    --defaultMemory 64.0G \
     ${WORKFLOW_HOME}/cwl/${WORKFLOW}.cwl \
     ${JOB_FILE} \
     2>${JOB_HOME}/${JOB_NAME}/${PIPELINE}_${JOB_NAME}_LOG.txt | tee ${JOB_HOME}/${JOB_NAME}/${PIPELINE}_${JOB_NAME}_OUTPUT.json
-    cat ${JOB_HOME}/${JOB_NAME}/${PIPELINE}_${JOB_NAME}_LOG.txt
-    
 fi
 
 #--defaultCores 1.0 \
@@ -234,7 +232,7 @@ fi
 
 
 # Stop printing commands and their arguments as they are executed.
-#set +x
+set +x
 
 
 

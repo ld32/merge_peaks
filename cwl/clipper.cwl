@@ -13,8 +13,8 @@ requirements:
 hints:
   - class: DockerRequirement
     dockerPull: brianyee/clipper:5d865bb
-    
-baseCommand: [clipper]
+
+baseCommand: [runClipper.sh, --processors=20]
 
 inputs:
 

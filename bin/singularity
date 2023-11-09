@@ -1,0 +1,13 @@
+#!/bin/sh
+
+[[ "$1" == --version ]] && echo apptainer version 1.2.4-1.el7; exit 
+
+cmd=/usr/bin/singularity
+
+for i in "$@"; do
+    [[ "$i" == --quiet ]] && i=""
+    [[ "$i" == *.sif ]] && i=`realpath $i`
+    cmd="$cmd $i"
+done
+$cmd
+
